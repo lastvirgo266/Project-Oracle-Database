@@ -26,4 +26,4 @@ where hotel = b_name;
 INSERT INTO ROOM
 VALUES(room, room_phone, grade, grand, r_id, b_id);
 
-END;
+END resv_room;
