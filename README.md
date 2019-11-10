@@ -2,7 +2,7 @@
 
   
   
-## RESERVATION
+## RESERVATION 테이블
  예시
 ~~~ sql
 INSERT INTO reservation VALUES
@@ -17,3 +17,11 @@ INSERT INTO reservation VALUES
   ~~~ sql
   exec resv_room('010-1111-1111', '452', 'deluxe', 'single', '서울고구려');
   ~~~ 
+
+ ## 함수
+ 예시
+ ~~~ sql
+ var result_cal number
+ exec :result_cal := calculate_charge('010-1161-1111')
+ print :result_cal
+ ~~~
