@@ -25,3 +25,12 @@ INSERT INTO reservation VALUES
  exec :result_cal := calculate_charge('010-1161-1111')
  print :result_cal
  ~~~
+
+
+ ## 패키지
+ 예시
+ ~~~ sql
+ exec reservation_info.all_resv_info;
+ exec reservation_info.resv_room_info('김김김');
+ 
+ ~~~
