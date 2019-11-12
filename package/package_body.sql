@@ -15,13 +15,13 @@ CREATE OR REPLACE PACKAGE BODY reservation_info AS
  END LOOP;
  END all_resv_info;
  
- 
  procedure resv_room_info(r_name in VARCHAR2)
  IS
- resv_id VARCHAR2;
- branch_name VARCHAR2;
+ resv_id reservation.resv_no%TYPE;
+ branch_name branch.b_name%TYPE;
  CURSOR room_cursor IS
  SELECT * FROM room;
+ 
  BEGIN
  
  SELECT resv_no
@@ -30,20 +30,20 @@ CREATE OR REPLACE PACKAGE BODY reservation_info AS
  where resv_name = r_name;
 
 
-FOR cur IN cursor_customer LOOP
+FOR cur IN room_cursor LOOP
 IF cur.r_resv_no = resv_id THEN
  SELECT b_name
  into branch_name
  from branch
- where roomBranch = b_no;
+ where cur.r_b_no = b_no;
  
  DBMS_OUTPUT.PUT_LINE('번호 :' || cur.r_no);
  DBMS_OUTPUT.PUT_LINE('내전전화 :' || cur.r_phonenumber);
  DBMS_OUTPUT.PUT_LINE('방 등급 : ' || cur.r_grade);
- DBMS_OUTPUT.PUT_LINE('방 크기 : ' || cur.r_grande);
+ DBMS_OUTPUT.PUT_LINE('방 크기 : ' || cur.r_grand);
  DBMS_OUTPUT.PUT_LINE('호텔 이름 : ' || branch_name);
  END IF;
  END LOOP; 
  
-end resv_room_info;
-end reservation_info;
+END resv_room_info;
+END reservation_info;
