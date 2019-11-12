@@ -1,3 +1,4 @@
+  
 CREATE OR REPLACE PACKAGE BODY reservation_info AS
  procedure all_resv_info
  IS
@@ -12,6 +13,7 @@ CREATE OR REPLACE PACKAGE BODY reservation_info AS
  DBMS_OUTPUT.PUT_LINE('유아 인원 : ' || cur.resv_infant);
  DBMS_OUTPUT.PUT_LINE('체크인 : ' || cur.resv_checkin);
  DBMS_OUTPUT.PUT_LINE('체크아웃 : ' || cur.resv_checkout);
+ DBMS_OUTPUT.PUT_LINE('----------------------------');
  END LOOP;
  END all_resv_info;
  
@@ -42,6 +44,7 @@ IF cur.r_resv_no = resv_id THEN
  DBMS_OUTPUT.PUT_LINE('방 등급 : ' || cur.r_grade);
  DBMS_OUTPUT.PUT_LINE('방 크기 : ' || cur.r_grand);
  DBMS_OUTPUT.PUT_LINE('호텔 이름 : ' || branch_name);
+ DBMS_OUTPUT.PUT_LINE('----------------------------');
  END IF;
  END LOOP; 
  
