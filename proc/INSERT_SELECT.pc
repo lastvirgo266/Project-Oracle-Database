@@ -1,0 +1,101 @@
+#include <stdio.h> 
+#include <string.h> 
+#include <sqlca.h>  
+
+EXEC SQL BEGIN DECLARE SECTION; 
+char connstr[30];
+EXEC SQL END DECLARE SECTION; 
+
+void SqlConnect() { 
+  strcpy_s(connstr, 30, "user/user@localhost/XE");
+  EXEC SQL CONNECT :connstr;  
+
+  if (sqlca.sqlcode != 0 && sqlca.sqlcode != -1405) { 
+    printf("\n connect error message = %s", sqlca.sqlerrm.sqlerrmc); 
+  } else 
+    printf("\n ********** DB CONNECT SUCCESS **********");
+}
+
+void SqlInsert() { 
+	EXEC SQL BEGIN DECLARE SECTION ; 
+	char resv_no[10],  resv_phonenumber[15], resv_name[15];
+	int resv_adult, resv_minor, resv_infant;
+	char resv_checkin[12], resv_checkout[12]; 
+	EXEC SQL END DECLARE SECTION ; 	
+	
+	printf("\n insert할 값을 입력하세요.\n");
+	printf("\n 고객번호 : ");
+	scanf("%s", resv_no);
+	printf("\n 고객전화번호 : ");
+	scanf("%s", resv_phonenumber);
+	printf("\n 이름 : ");
+	scanf("%s", resv_name);
+	printf("\n 예약할 성인인원 : ");
+	scanf("%d", &resv_adult);
+	printf("\n 예약할 어린이 : ");
+	scanf("%d", &resv_minor);
+	printf("\n 예약할 성인인원 : ");
+	scanf("%d", &resv_infant);
+	printf("\n 체크인 : ");
+	scanf("%s", resv_checkin);
+	printf("\n 체크아웃 : ");
+	scanf("%s", resv_checkout);
+
+
+	EXEC SQL INSERT INTO RESERVATION values(:resv_no, :resv_phonenumber, :resv_name, :resv_adult, :resv_minor, :resv_infant, :resv_checkin, :resv_checkout);
+	printf(" insert complete \n\n");
+	EXEC SQL COMMIT WORK;
+}
+
+void SqlSelect() { 
+	EXEC SQL BEGIN DECLARE SECTION ; 
+	char resv_no[10],  resv_phonenumber[15], resv_name[15];
+	int resv_adult, resv_minor, resv_infant;
+	char resv_checkin[12], resv_checkout[12];
+	EXEC SQL END DECLARE SECTION ;		
+
+  	EXEC SQL DECLARE customer_cursor CURSOR FOR SELECT resv_no, resv_phonenumber, resv_name, resv_adult, resv_minor, resv_infant, resv_checkin, resv_checkout FROM RESERVATION; 
+ 	EXEC SQL OPEN customer_cursor ; 
+  	EXEC SQL FETCH customer_cursor INTO :resv_no, :resv_phonenumber, :resv_name, :resv_adult, :resv_minor, :resv_infant, :resv_checkin, :resv_checkout ; 
+
+  	if (sqlca.sqlcode != 0 && sqlca.sqlcode != -1405) { 
+     	EXEC SQL CLOSE customer_cursor ; 
+    	return ; }
+	
+	while(1) { 
+		printf("\n 고객번호 : %s", resv_no);
+		printf("\n 고객전화번호 : %s", resv_phonenumber);
+		printf("\n 이름 : %s",resv_name);
+	
+		printf("\n 체크인 : %s",resv_checkin);
+
+		printf("\n 체크아웃 : %s",resv_checkout);
+
+
+     	EXEC SQL FETCH customer_cursor INTO :resv_no, :resv_phonenumber, :resv_name, :resv_adult, :resv_minor, :resv_infant, :resv_checkin, :resv_checkout ; 
+
+    	if (sqlca.sqlcode != 0 && sqlca.sqlcode != -1405) { 
+		EXEC SQL CLOSE customer_cursor ; 
+        	break;} 
+	} 
+  	EXEC SQL CLOSE customer_cursor; 
+	EXEC SQL COMMIT WORK;
+}
+
+
+void main(){
+	char ch;
+	SqlConnect(); 
+
+	while(1) {
+		printf("\n 예약하기 : 1 \n 명단조회 : 2 \n");
+      	scanf("%c",&ch);
+      	printf("\n");
+      	
+	switch(ch) {
+        	case '1' : SqlInsert();  break;
+        	case '2' : SqlSelect();  break;
+        	case 'Q' : EXEC SQL COMMIT WORK; return;
+		}
+	}
+}
