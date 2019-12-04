@@ -1,0 +1,54 @@
+#include <stdio.h> 
+#include <string.h> 
+#include <sqlca.h>  
+
+EXEC SQL BEGIN DECLARE SECTION; 
+char connstr[30];
+EXEC SQL END DECLARE SECTION; 
+
+void SqlConnect() { 
+  strcpy_s(connstr, 30, "user/user@localhost/XE");
+  EXEC SQL CONNECT :connstr;  
+
+  if (sqlca.sqlcode != 0 && sqlca.sqlcode != -1405) { 
+    printf("\n connect error message = %s", sqlca.sqlerrm.sqlerrmc); 
+  } else 
+    printf("\n ********** DB CONNECT SUCCESS **********");
+}
+
+void main(){
+	EXEC SQL BEGIN DECLARE SECTION ; 
+    char r_no[5], r_phonenumber[4], r_grade[12], r_grand[10], r_resv_no[10], r_b_no[10]; 
+	EXEC SQL END DECLARE SECTION ; 
+
+  	int count=0 ; 
+    SqlConnect(); 
+ 
+  	EXEC SQL DECLARE room_cursor CURSOR FOR SELECT r_no, r_phonenumber, r_grade, r_grand, r_resv_no, r_b_no FROM ROOM; 
+ 	EXEC SQL OPEN room_cursor ; 
+  	EXEC SQL FETCH room_cursor INTO :r_no, :r_phonenumber, :r_grade, :r_grand, :r_resv_no, :r_b_no ; 
+
+  	if (sqlca.sqlcode != 0 && sqlca.sqlcode != -1405) { 
+     	EXEC SQL CLOSE room_cursor ; 
+    	return ;
+    }
+
+while(1) { 
+      count++ ; 
+      printf("\n\n 방 번호 = %s", r_no);
+      printf("\n 방 내선전화 = %s", r_phonenumber); 
+      printf("\n 방 등급 = %s", r_grade); 
+      printf("\n 방 크기 = %s", r_grand); 
+      printf("\n 예약자 번호 = %s \n", r_resv_no);
+      printf("\n 호텔 번호 = %s\n\n", r_b_no); 
+
+     EXEC SQL FETCH room_cursor INTO :r_no, :r_phonenumber, :r_grade, :r_grand, :r_resv_no, :r_b_no ; 
+
+    	if (sqlca.sqlcode != 0 && sqlca.sqlcode != -1405) { 
+	    		EXEC SQL CLOSE room_cursor ; 
+        	break;
+    	} 
+} 
+  	printf("\n\n 만족하는 총 레코드 건 수 =%d \n\n", count) ; 
+  	EXEC SQL CLOSE room_cursor; 
+}
